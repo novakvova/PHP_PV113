@@ -11,10 +11,13 @@
 </head>
 <body>
 <div class="container py-3">
-    <?php include_once $_SERVER["DOCUMENT_ROOT"]."/_header.php"; ?>
+    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/_header.php"; ?>
+
     <h1 class="text-center">Актуальні новини</h1>
 
-    <?php include_once $_SERVER["DOCUMENT_ROOT"]."/connection_database.php"; ?>
+    <a href="/create.php" class="btn btn-success">Додати новину</a>
+
+    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/connection_database.php"; ?>
 
     <table class="table">
         <thead>
@@ -31,11 +34,11 @@
         $stm = $dbh->query('SELECT * FROM news');
         // fetch all rows into array, by default PDO::FETCH_BOTH is used
         $rows = $stm->fetchAll();
-        foreach($rows as $row) {
-                $id = $row["id"];
-                $name = $row["name"];
-                $datepublish = $row["datepublish"];
-                $description = $row["description"];
+        foreach ($rows as $row) {
+            $id = $row["id"];
+            $name = $row["name"];
+            $datepublish = $row["datepublish"];
+            $description = $row["description"];
             echo "
         <tr>
             <th scope='row'>$id</th>
