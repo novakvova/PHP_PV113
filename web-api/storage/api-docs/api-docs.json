@@ -1,0 +1,30 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Усіх із Паскох",
+        "description": "Demo my Project ",
+        "contact": {
+            "email": "admin@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "d1f6c377f807ef0e6417aaa000d81e3c",
+                "responses": {
+                    "200": {
+                        "description": "List Categories."
+                    }
+                }
+            }
+        }
+    }
+}
