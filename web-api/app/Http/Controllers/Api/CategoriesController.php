@@ -33,7 +33,11 @@ class CategoriesController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"name"},
+     *                 required={"name","image"},
+     *                 @OA\Property(
+     *                      property="image",
+     *                      type="file",
+     *                  ),
      *                 @OA\Property(
      *                     property="name",
      *                     type="string"
