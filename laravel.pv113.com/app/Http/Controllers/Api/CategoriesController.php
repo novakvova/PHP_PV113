@@ -156,6 +156,10 @@ class CategoriesController extends Controller
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 required={"name"},
+     *                  @OA\Property(
+     *                      property="image",
+     *                      type="file"
+     *                  ),
      *                 @OA\Property(
      *                     property="name",
      *                     type="string"
@@ -168,8 +172,26 @@ class CategoriesController extends Controller
      */
     public function edit($id, Request $request) : JsonResponse {
         $category = Categories::findOrFail($id);
+        $imageName=$category->image;
         $inputs = $request->all();
-
+        if($request->hasFile("image")) {
+            $image = $request->file("image");
+            $imageName = uniqid() . ".webp";
+            $sizes = [50, 150, 300, 600, 1200];
+            // create image manager with desired driver
+            $manager = new ImageManager(new Driver());
+            foreach ($sizes as $size) {
+                $fileSave = $size . "_" . $imageName;
+                $imageRead = $manager->read($image);
+                $imageRead->scale(width: $size);
+                $path = public_path('upload/' . $fileSave);
+                $imageRead->toWebp()->save($path);
+                $removeImage = public_path('upload/'.$size."_". $category->image);
+                if(file_exists($removeImage))
+                    unlink($removeImage);
+            }
+        }
+        $inputs["image"]= $imageName;
         $category->update($inputs);
         return response()->json($category,200,
             ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE);
