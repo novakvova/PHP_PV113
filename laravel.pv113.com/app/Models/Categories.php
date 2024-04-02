@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method static create(array $inputs)
+ * @method static findOrFail($id)
  */
 class Categories extends Model
 {
@@ -16,4 +17,5 @@ class Categories extends Model
         'name',
         'image'
     ];
+
 }
