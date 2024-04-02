@@ -50,7 +50,24 @@ class CategoriesController extends Controller
      */
     public function create(Request $request) : JsonResponse
     {
+        $folderName =  public_path('upload');
+        if (!file_exists($folderName)) {
+            mkdir($folderName, 0777); // Створити папку з правами доступу 0777
+        }
+
         $inputs = $request->all();
+        $image = $request->file("image");
+        $imageName = uniqid().".webp";
+        $sizes = [50, 150, 300, 600, 1200];
+        $manager = new ImageManager(new Driver());
+        foreach($sizes as $size) {
+            $fileSave = $size ."_".$imageName;
+            $imageRead = $manager->read($image);
+            $imageRead->scale(width: $size);
+            $path = public_path('upload/'.$fileSave);
+            $imageRead->toWebp()->save($path);
+        }
+        $inputs["image"] = $imageName;
         $category = Categories::create($inputs);
 
         return response()->json($category, 201)
