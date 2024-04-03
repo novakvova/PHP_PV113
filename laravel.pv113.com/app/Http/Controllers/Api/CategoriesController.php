@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SampleEmail;
 use App\Models\Categories;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
@@ -203,4 +205,35 @@ class CategoriesController extends Controller
         return response()->json($category,200,
             ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE);
     }
+
+    /**
+     * @OA\Post(
+     *     tags={"Category"},
+     *     path="/api/categories/send",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"email"},
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="string"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="Add Category.")
+     * )
+     */
+    public function send(Request $request) : JsonResponse
+    {
+        $inputs = $request->all();
+
+
+        Mail::to($inputs["email"])->send(new SampleEmail());
+
+        return response()->json($inputs["email"], 200)
+            ->header("Content-Type", 'application/json; charset=utf-8');
+    }
+
 }
