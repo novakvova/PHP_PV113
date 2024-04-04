@@ -1,2 +1,1 @@
-Can your Laravel app send emails yet? 😉
-Mailtrap
+Їжте добре і буде усе круто.

@@ -175,12 +175,12 @@
                 }
             }
         },
-        "/api/categories/send": {
+        "/api/send/email": {
             "post": {
                 "tags": [
-                    "Category"
+                    "Sender"
                 ],
-                "operationId": "9662ef382d95fb21496ea710a3d59931",
+                "operationId": "fca2a89c2ac3ccda341e90161c1a8d73",
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
