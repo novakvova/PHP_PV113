@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {},
+    fontFamily: {
+      body: ["DM Mono"],
+      title: ["Righteous"],
+    },
   },
   plugins: [],
 }
