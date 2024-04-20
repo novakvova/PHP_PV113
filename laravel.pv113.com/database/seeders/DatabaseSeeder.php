@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         if(User::count()==0) {
             User::factory(10)->create();
         }
-        
+
         if(Categories::count()==0) {
             Categories::factory(20)->create();
         }

@@ -14,7 +14,7 @@ const App = () => {
                     {/*<Route path="users" element={<UsersTasks />} />*/}
                     {/*<Route path="tasks" element={<TasksPage />} />*/}
                 </Route>
-
+                {/*<Route path={"/news"} element={<NewsPage/>}/>*/}
                 <Route path="*" element={<NotFoundPage/>}/>
             </Routes>
         </>
