@@ -17,12 +17,39 @@ class CategoriesController extends Controller
      * @OA\Get(
      *     tags={"Category"},
      *     path="/api/categories",
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="The page number to retrieve",
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Search term to filter categories",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(response="200", description="List Categories.")
      * )
      */
-    public function getList() : JsonResponse
+    public function getList(Request $request) : JsonResponse
     {
-        $data = Categories::all();
+        $perPage = 4;
+        $page = $request->query('page', 1);
+        $searchTerm = $request->query('search');
+
+        $query = Categories::query();
+
+        if ($searchTerm) {
+            $query->where('name', 'like', "%{$searchTerm}%");
+        }
+
+        $data = $query->paginate($perPage, ['*'], 'page', $page);
         return response()->json($data)
             ->header("Content-Type", 'application/json; charset=utf-8');
     }

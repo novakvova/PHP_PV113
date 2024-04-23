@@ -1,14 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../utils/apiUrl.ts";
-import {ICategory, ICreateCategory} from "../interfaces/category";
+import {ICategoryResponse, ICreateCategory} from "../interfaces/category";
 
 export const categoryApi = createApi({
     reducerPath: "categoryApi",
     baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api` }),
     tagTypes: ["Category"],
     endpoints: (builder) => ({
-        getCategories: builder.query<ICategory[], void>({
-            query: () => "/categories",
+        getCategories: builder.query<ICategoryResponse, { page: number; search: string }>({
+            query: ({ page, search }) => `/categories?page=${page}&search=${search}`,
             providesTags: ["Category"],
         }),
         addCategory: builder.mutation({
