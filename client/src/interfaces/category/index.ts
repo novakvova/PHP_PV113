@@ -15,3 +15,20 @@ export interface ICreateCategory {
     image: File;
     description: string;
 }
+
+export interface IEditCategory {
+    name: string;
+    image?: File;
+}
+
+interface IBase {
+    id: number;
+    created_at: string;
+    updatedAt: string;
+}
+
+export interface ICategory extends IBase {
+    name: string;
+    image: string;
+    description: string;
+}

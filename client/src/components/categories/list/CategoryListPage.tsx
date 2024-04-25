@@ -9,12 +9,16 @@ import { Input } from "../../ui/Input.tsx";
 import {useDebouncedCallback} from "use-debounce";
 import CategoryGrid from "./CategoryGrid.tsx";
 import showToast from "../../../utils/showToast.ts";
+import CategoryEditModal from "../edit/CategoryEditModal.tsx";
 
 const CategoryListPage = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
+
+    const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+    const [currentCategory, setCurrentCategory] = useState<number | null>(null);
 
     const { data: categories, isLoading } = useGetCategoriesQuery({
         page: Number(searchParams.get("page")) || 1,
@@ -31,6 +35,17 @@ const CategoryListPage = () => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
             showToast(`Error deleted ${id} category! ${err.error}`, "error");
+        }
+    };
+
+    const handleEditCategory = async (id: number) => {
+        try {
+            setCurrentCategory(id);
+            setEditModalOpen(true);
+        } catch (err) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            showToast(`Error edited category! ${err.error}`, "error");
         }
     };
 
@@ -70,12 +85,16 @@ const CategoryListPage = () => {
                 <CategoryGrid
                     categories={categories?.data}
                     totalPages={categories?.last_page}
-                    edit={()=>{}}
+                    edit={handleEditCategory}
                     remove={handleDeleteCategory}
                     isLoading={isLoading}
                 />
 
             {createModalOpen && <CategoryCreateModal open={createModalOpen} close={() => setCreateModalOpen(false)} />}
+
+            {editModalOpen && currentCategory && (
+                <CategoryEditModal id={currentCategory} open={editModalOpen} close={() => setEditModalOpen(false)} />
+            )}
         </div>
     );
 }

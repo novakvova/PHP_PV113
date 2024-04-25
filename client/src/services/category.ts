@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../utils/apiUrl.ts";
-import {ICategoryResponse, ICreateCategory} from "../interfaces/category";
+import {ICategory, ICategoryResponse, ICreateCategory, IEditCategory} from "../interfaces/category";
 
 export const categoryApi = createApi({
     reducerPath: "categoryApi",
@@ -27,6 +27,29 @@ export const categoryApi = createApi({
             //Привязуємося до тега, якщо нічого не змінилося(залишаємо стера, якщо є зміни то оновляємо)
             invalidatesTags: ["Category"],
         }),
+
+        editCategory: builder.mutation({
+            query: ({ id, category }: { id: number; category: IEditCategory }) => {
+                const categoryFormData = new FormData();
+                if (category.image) {
+                    categoryFormData.append("image", category.image);
+                }
+                categoryFormData.append("name", category.name);
+                //categoryFormData.append("description", category.description);
+
+                return {
+                    url: `/categories/edit/${id}`,
+                    method: "POST",
+                    body: categoryFormData,
+                };
+            },
+            invalidatesTags: ["Category"],
+        }),
+
+        getCategory: builder.query<ICategory, number>({
+            query: (id) => `/categories/${id}`,
+        }),
+
         deleteCategory: builder.mutation({
             query: (id) => ({
                 url: `/categories/${id}`,
@@ -39,5 +62,7 @@ export const categoryApi = createApi({
 export const {
     useGetCategoriesQuery,
     useAddCategoryMutation,
-    useDeleteCategoryMutation
+    useDeleteCategoryMutation,
+    useEditCategoryMutation,
+    useGetCategoryQuery,
 } = categoryApi;
