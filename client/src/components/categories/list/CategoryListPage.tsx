@@ -1,5 +1,5 @@
 import { IconPencilPlus } from "@tabler/icons-react";
-import { useGetCategoriesQuery } from "../../../services/category.ts";
+import {useDeleteCategoryMutation, useGetCategoriesQuery} from "../../../services/category.ts";
 import Skeleton from "../../helpers/Skeleton.tsx";
 import {Button} from "../../ui/Button.tsx";
 import {useState} from "react";
@@ -8,6 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import { Input } from "../../ui/Input.tsx";
 import {useDebouncedCallback} from "use-debounce";
 import CategoryGrid from "./CategoryGrid.tsx";
+import showToast from "../../../utils/showToast.ts";
 
 const CategoryListPage = () => {
 
@@ -19,6 +20,19 @@ const CategoryListPage = () => {
         page: Number(searchParams.get("page")) || 1,
         search: searchParams.get("search") || "",
     });
+
+    const [deleteCategory] = useDeleteCategoryMutation();
+
+    const handleDeleteCategory = async (id: number) => {
+        try {
+            await deleteCategory(id).unwrap();
+            showToast(`Category ${id} successful deleted!`, "success");
+        } catch (err) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            showToast(`Error deleted ${id} category! ${err.error}`, "error");
+        }
+    };
 
     const handleSearch = useDebouncedCallback((term) => {
         if (term) {
@@ -57,7 +71,7 @@ const CategoryListPage = () => {
                     categories={categories?.data}
                     totalPages={categories?.last_page}
                     edit={()=>{}}
-                    remove={()=>{}}
+                    remove={handleDeleteCategory}
                     isLoading={isLoading}
                 />
 
