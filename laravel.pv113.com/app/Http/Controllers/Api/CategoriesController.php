@@ -49,6 +49,8 @@ class CategoriesController extends Controller
             $query->where('name', 'like', "%{$searchTerm}%");
         }
 
+        $query->where("is_delete", false);
+
         $data = $query->paginate($perPage, ['*'], 'page', $page);
         return response()->json($data)
             ->header("Content-Type", 'application/json; charset=utf-8');
@@ -162,14 +164,15 @@ class CategoriesController extends Controller
      */
     public function delete($id) : JsonResponse {
         $category = Categories::findOrFail($id);
-        $sizes = [50,150,300,600,1200];
-        foreach ($sizes as $size) {
-            $fileSave = $size."_".$category->image;
-            $path=public_path('upload/'.$fileSave);
-            if(file_exists($path))
-                unlink($path);
-        }
-        $category->delete();
+        $category->update(["is_delete"=>true]);
+//        $sizes = [50,150,300,600,1200];
+//        foreach ($sizes as $size) {
+//            $fileSave = $size."_".$category->image;
+//            $path=public_path('upload/'.$fileSave);
+//            if(file_exists($path))
+//                unlink($path);
+//        }
+//        $category->delete();
         return response()->json("",200, ['Charset' => 'utf-8']);
     }
 
