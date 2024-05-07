@@ -15,13 +15,13 @@ services:
   #            - my-laravel-network
 
   app:
-#    image: ihorsamolich/laravel-docker
-    build:
-        context: .
-        dockerfile: Dockerfile
+    image: novakvova/pv113_laravel:latest
+#    build:
+#        context: .
+#        dockerfile: Dockerfile
     volumes:
-#        -   /data/website/images:/var/www/html/public/upload
-        -   D:\images:/var/www/html/public/upload
+        -   /data/website/images:/var/www/html/public/upload
+#        -   D:\images:/var/www/html/public/upload
     #    depends_on:
     #      - db
     ports:
