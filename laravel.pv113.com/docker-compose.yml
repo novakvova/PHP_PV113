@@ -30,3 +30,11 @@ services:
     #            - uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - my-laravel-network
+  client:
+    image: novakvova/pv113-client:latest 
+    ports:
+      - "5050:80" 
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
