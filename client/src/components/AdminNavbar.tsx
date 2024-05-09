@@ -40,7 +40,7 @@ const AdminNavbar = ({ showSidebar, setShowSidebar }: AdminNavbarProps) => {
                     <div className="flex gap-5">
                         <Input className="hidden md:flex" placeholder="Search..." />
                         <ul className="flex w-full list-none flex-col">
-                            <MenuItem title="Sign In" path={"/sign-in"} icon={<IconUser />} variants="DARK" />
+                            <MenuItem title="Sign In" path={"/login"} icon={<IconUser />} variants="DARK" />
                         </ul>
                         <Button>
                             <IconBell />
