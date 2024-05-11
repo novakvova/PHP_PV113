@@ -5,7 +5,6 @@ import {
     IconHome,
     IconHomeStats,
     IconListCheck,
-    IconMessageShare,
     IconTruckDelivery,
     IconUsers,
 } from "@tabler/icons-react";

@@ -4,7 +4,10 @@ import { API_URL } from "../utils/apiUrl.ts";
 
 export const authApi = createApi({
     reducerPath: "authApi",
-    baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api` }),
+    baseQuery: fetchBaseQuery(
+        {
+            baseUrl: `${API_URL}/api`
+        }),
     tagTypes: ["Auth"],
     endpoints: (builder) => ({
         getUsers: builder.query<User[], void>({

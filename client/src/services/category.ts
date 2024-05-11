@@ -4,7 +4,18 @@ import {ICategory, ICategoryResponse, ICreateCategory, IEditCategory} from "../i
 
 export const categoryApi = createApi({
     reducerPath: "categoryApi",
-    baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api` }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: `${API_URL}/api`,
+        prepareHeaders: (headers) => {
+
+            const token = localStorage.getItem("authToken");
+            if(token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
+            console.log("Headers", headers.get("Authorization"));
+            return headers;
+        }
+    }),
     tagTypes: ["Category"],
     endpoints: (builder) => ({
         getCategories: builder.query<ICategoryResponse, { page: number; search: string }>({

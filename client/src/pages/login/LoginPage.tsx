@@ -1,19 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import GoogleAuth from "../components/GoogleAuth";
-import { Button } from "../components/ui/Button";
-import FormError from "../components/ui/FormError";
-import { Input } from "../components/ui/Input";
-import Label from "../components/ui/Label.tsx";
+import GoogleAuth from "../../components/GoogleAuth.tsx";
+import { Button } from "../../components/ui/Button.tsx";
+import FormError from "../../components/ui/FormError.tsx";
+import { Input } from "../../components/ui/Input.tsx";
+import Label from "../../components/ui/Label.tsx";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../services/auth.ts";
-import { setCredentials } from "../store/slice/authSlice.ts";
-import { useAppDispatch } from "../store";
-import { CurrentUser } from "../interfaces/auth";
+import { useLoginMutation } from "../../services/auth.ts";
+import { setCredentials } from "../../store/slice/authSlice.ts";
+import { useAppDispatch } from "../../store";
+import { CurrentUser } from "../../interfaces/auth";
 
-import { jwtParser } from "../utils/jwtParser.ts";
-import showToast from "../utils/showToast.ts";
+import { jwtParser } from "../../utils/jwtParser.ts";
+import showToast from "../../utils/showToast.ts";
 import { z } from "zod";
 
 
