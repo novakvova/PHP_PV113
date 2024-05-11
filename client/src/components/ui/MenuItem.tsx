@@ -11,7 +11,7 @@ type MenuLinkProps = {
 
 const MenuItem = ({title, path, icon, variants}: MenuLinkProps) => {
     return (
-        <li className="rounded-lg">
+        <div className="w-full rounded-lg">
             <NavLink
                 to={path}
                 className={({isActive}: { isActive: boolean }) =>
@@ -25,7 +25,7 @@ const MenuItem = ({title, path, icon, variants}: MenuLinkProps) => {
                 {icon}
                 {title}
             </NavLink>
-        </li>
+        </div>
     );
 };
 
