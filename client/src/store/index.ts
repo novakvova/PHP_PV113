@@ -11,7 +11,11 @@ export const store = configureStore({
         [categoryApi.reducerPath]: categoryApi.reducer,
         [authApi.reducerPath]: authApi.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(categoryApi.middleware),
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(
+            categoryApi.middleware,
+            authApi.middleware,
+        ),
 });
 
 //рекомендація

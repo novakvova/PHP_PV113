@@ -1,14 +1,17 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Hash;
 
 use Google_Client;
-use Google_Service_Oauth2;
 
 class AuthController extends Controller
 {
@@ -147,7 +150,7 @@ class AuthController extends Controller
                         $fileSave = $size . "_" . $imageName;
                         $imageRead = $manager->read($imageContent);
                         $imageRead->scale(width: $size);
-                        $path = public_path('uploads/' . $fileSave);
+                        $path = public_path('upload/' . $fileSave);
                         $imageRead->toWebp()->save($path);
                     }
 
