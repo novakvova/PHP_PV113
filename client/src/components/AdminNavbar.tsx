@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { IconBell, IconMenu2, IconSettings, IconSquareRoundedX, IconUser } from "@tabler/icons-react";
-import { Input } from "./ui/Input.tsx";
 import { classNames } from "../utils/classNames.ts";
 import MenuItem from "./ui/MenuItem.tsx";
 import { Button } from "./ui/Button.tsx";
 import Breadcrumb from "./Breadcrumb.tsx";
 import Drawer from "./ui/Drawer.tsx";
+import {useAppSelector} from "../store";
+import {selectCurrentUser} from "../store/slice/authSlice.ts";
+import UserCurrent from "./user/UserCurrent.tsx";
 
 type AdminNavbarProps = {
     showSidebar: boolean;
@@ -14,6 +16,8 @@ type AdminNavbarProps = {
 
 const AdminNavbar = ({ showSidebar, setShowSidebar }: AdminNavbarProps) => {
     const [openSettings, setOpenSettings] = useState<boolean>(false);
+
+    const user = useAppSelector(selectCurrentUser);
 
     return (
         <nav className="px-3 py-6">
@@ -38,10 +42,11 @@ const AdminNavbar = ({ showSidebar, setShowSidebar }: AdminNavbarProps) => {
                     <Breadcrumb />
 
                     <div className="flex gap-5">
-                        <Input className="hidden md:flex" placeholder="Search..." />
-                        <ul className="flex w-full list-none flex-col">
+                        {!user ? (
                             <MenuItem title="Sign In" path={"/login"} icon={<IconUser />} variants="DARK" />
-                        </ul>
+                        ) : (
+                            <UserCurrent {...user} />
+                        )}
                         <Button>
                             <IconBell />
                         </Button>
