@@ -15,6 +15,7 @@ import { CurrentUser } from "../../interfaces/auth";
 import { jwtParser } from "../../utils/jwtParser.ts";
 import showToast from "../../utils/showToast.ts";
 import { z } from "zod";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 
 
 type LoginSchemaType = z.infer<typeof LoginSchema>;
@@ -24,6 +25,8 @@ const LoginSchema = z.object({
     password: z.string().trim().min(6).max(20),
 });
 const LoginPage = () => {
+
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const {
         register,
         handleSubmit,
@@ -36,7 +39,14 @@ const LoginPage = () => {
     const dispatch = useAppDispatch();
 
     const onSubmit = handleSubmit(async (data) => {
-        const res = await login(data);
+        if(!executeRecaptcha) {
+            showToast(`Привіт бот :(`, "error");
+            return;
+        }
+
+        const recaptchaToken = await executeRecaptcha();
+
+        const res = await login({...data, recaptchaToken});
 
         if ("data" in res) {
             localStorage.setItem("authToken", res.data.token);

@@ -33,7 +33,7 @@ export const authApi = createApi({
             invalidatesTags: ["Auth"],
         }),
 
-        login: builder.mutation<LoginResponse, { email: string; password: string }>({
+        login: builder.mutation<LoginResponse, {recaptchaToken: string, email: string; password: string }>({
             query: (data) => {
                 return {
                     url: "/login",

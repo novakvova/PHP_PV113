@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -59,22 +60,37 @@ class AuthController extends Controller
      * )
      */
     public function login(Request $request) {
-        $validation = Validator::make($request->all(),[
-            'email'=> 'required|email',
-            'password'=> 'required|string|min:6'
-        ], [
-            'email.required' => 'Пошта є побов\'язковим.',
-            'email.email' => 'Пошта є невалідною.',
-            'password.required' => 'Пароль не може буть пустим.',
-            'password.min' => 'Довжина пароля має бути мінімум 6 символів.',
+        $recaptchaToken = $request->recaptchaToken;
+
+        $secretKey = env('RECAPTCHA_SECRET_ID');
+
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $secretKey,
+            'response' => $recaptchaToken,
         ]);
-        if($validation->fails()) {
-            return response()->json($validation->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $score = $response['score'];
+
+        if ($response['success'] && $score >= 0.5) {
+            $validation = Validator::make($request->all(),[
+                'email'=> 'required|email',
+                'password'=> 'required|string|min:6'
+            ], [
+                'email.required' => 'Пошта є побов\'язковим.',
+                'email.email' => 'Пошта є невалідною.',
+                'password.required' => 'Пароль не може буть пустим.',
+                'password.min' => 'Довжина пароля має бути мінімум 6 символів.',
+            ]);
+            if($validation->fails()) {
+                return response()->json($validation->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            if(!$token = auth()->attempt($validation->validated())) {
+                return response()->json(['error'=>'Не вірно вказано дані!'], Response::HTTP_UNAUTHORIZED);
+            }
+            return response()->json(['token'=>$token], Response::HTTP_OK);
+        } else {
+            return response()->json(['error'=>'З ботами не працюємо'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        if(!$token = auth()->attempt($validation->validated())) {
-            return response()->json(['error'=>'Не вірно вказано дані!'], Response::HTTP_UNAUTHORIZED);
-        }
-        return response()->json(['token'=>$token], Response::HTTP_OK);
     }
 
     /**
@@ -190,7 +206,6 @@ class AuthController extends Controller
         }
     }
 
-
     /**
      * @OA\Post(
      *   path="/api/verification",
@@ -262,7 +277,6 @@ class AuthController extends Controller
         return response()->json($data)
             ->header("Content-Type", 'application/json; charset=utf-8');
     }
-
 
     /**
      * @OA\Post(
