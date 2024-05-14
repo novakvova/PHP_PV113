@@ -12,6 +12,7 @@ import {useAddUserMutation} from "../../services/auth.ts";
 import showToast from "../../utils/showToast.ts";
 import {z} from "zod";
 import {ACCEPTED_IMAGE_MIME_TYPES, MAX_FILE_SIZE} from "../../constants";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 
 
 export type CreateUserSchemaType = z.infer<typeof CreateUserSchema>;
@@ -48,6 +49,8 @@ export const CreateUserSchema = z
     });
 const RegisterPage = () => {
 
+    const { executeRecaptcha } = useGoogleReCaptcha();
+
     const {
         register,
         handleSubmit,
@@ -73,7 +76,12 @@ const RegisterPage = () => {
 
     const onSubmit = handleSubmit(async (data) => {
         try {
-            await addUser({...data, image: data.image[0]}).unwrap();
+            if(!executeRecaptcha) {
+                showToast(`Привіт бот :(`, "error");
+                return;
+            }
+            const recaptchaToken = await executeRecaptcha();
+            await addUser({...data, image: data.image[0], recaptchaToken}).unwrap();
             showToast(`User ${data.name} successful created!`, "success");
             navigate("/login");
         } catch (err) {
@@ -180,9 +188,9 @@ const RegisterPage = () => {
 
 
                     <p className="mt-10 text-center text-sm text-gray-500">
-                        Not a member?{" "}
-                        <Link to="/register" className="font-semibold leading-6 text-orange-500 hover:text-orange-600">
-                            Create new account
+                        There is an account?{" "}
+                        <Link to="/login" className="font-semibold leading-6 text-orange-500 hover:text-orange-600">
+                            Sing in
                         </Link>
                     </p>
                 </div>

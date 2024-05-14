@@ -60,18 +60,7 @@ class AuthController extends Controller
      * )
      */
     public function login(Request $request) {
-        $recaptchaToken = $request->recaptchaToken;
-
-        $secretKey = env('RECAPTCHA_SECRET_ID');
-
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => $secretKey,
-            'response' => $recaptchaToken,
-        ]);
-
-        $score = $response['score'];
-
-        if ($response['success'] && $score >= 0.5) {
+        if ($this->isValidRecaptcha($request->recaptchaToken)) {
             $validation = Validator::make($request->all(),[
                 'email'=> 'required|email',
                 'password'=> 'required|string|min:6'
@@ -312,41 +301,59 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'phone' => 'nullable|string|max:255',
-            'image' => 'file',
-        ]);
+        if ($this->isValidRecaptcha($request->recaptchaToken)) {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6',
+                'phone' => 'nullable|string|max:255',
+                'image' => 'file',
+            ]);
 
-        if ($request->hasFile('image')) {
-            $takeImage = $request->file('image');
-            $manager = new ImageManager(new Driver());
+            if ($request->hasFile('image')) {
+                $takeImage = $request->file('image');
+                $manager = new ImageManager(new Driver());
 
-            $filename = time();
+                $filename = time();
 
-            $sizes = [100, 300, 500];
+                $sizes = [100, 300, 500];
 
-            foreach ($sizes as $size) {
-                $image = $manager->read($takeImage);
-                $image->scale(width: $size, height: $size);
-                $image->toWebp()->save(base_path('public/upload/' . $size . '_' . $filename . '.webp'));
+                foreach ($sizes as $size) {
+                    $image = $manager->read($takeImage);
+                    $image->scale(width: $size, height: $size);
+                    $image->toWebp()->save(base_path('public/upload/' . $size . '_' . $filename . '.webp'));
+                }
             }
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone' => $request->phone,
+                'image' => $filename . '.webp'
+            ]);
+
+            //$user->sendEmailVerificationNotification();
+            $user->email_verified_at = now();
+            $user->save();
+
+            $token = auth()->login($user);
+            return response()->json(['token' => $token], Response::HTTP_CREATED);
+        }
+        else {
+            return response()->json(['error'=>'З ботами не працюємо'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'image' => $filename . '.webp',
+    }
+
+    private function isValidRecaptcha($recaptchaToken) {
+        $secretKey = env('RECAPTCHA_SECRET_ID');
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $secretKey,
+            'response' => $recaptchaToken,
         ]);
 
-        $user->sendEmailVerificationNotification();
-
-        $token = auth()->login($user);
-        return response()->json(['token' => $token], Response::HTTP_CREATED);
-
+        $score = $response['score'];
+        return $response['success'] && $score >= 0.5;
     }
 }

@@ -22,6 +22,7 @@ export const authApi = createApi({
                 userFormData.append("name", user.name);
                 userFormData.append("email", user.email);
                 userFormData.append("phone", user.phone);
+                userFormData.append("recaptchaToken", user.recaptchaToken);
                 userFormData.append("password", user.password);
 
                 return {
